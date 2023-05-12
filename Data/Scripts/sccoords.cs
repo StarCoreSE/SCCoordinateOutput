@@ -65,9 +65,20 @@ namespace coordoutput
                             reader.Close();
                         }
 
+                        // Remove any lines with the same grid name as the current grid
+                        string[] lines = existingContents.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                        string updatedContents = "";
+                        foreach (string line in lines)
+                        {
+                            if (!line.StartsWith(Cockpit.CubeGrid.CustomName))
+                            {
+                                updatedContents += line + "\n";
+                            }
+                        }
+
                         // Append new data to the existing contents
                         string newData = string.Format("{0} position: X={1}, Y={2}, Z={3}\n", Cockpit.CubeGrid.CustomName, currentPosition.X, currentPosition.Y, currentPosition.Z);
-                        string updatedContents = existingContents + newData;
+                        updatedContents += newData;
 
                         // Write the updated contents back to the file
                         var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(coordoutput));
