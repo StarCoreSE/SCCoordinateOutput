@@ -20,7 +20,7 @@ namespace coordoutput
     {
         private Sandbox.ModAPI.IMyCockpit Cockpit;
         private int triggerTick = 0;
-        private string fileName = "helloworld.txt";
+        private string fileName = "coordinates.txt";
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
@@ -51,7 +51,7 @@ namespace coordoutput
             {
                 if (Cockpit.IsUnderControl) // Only execute when cockpit is manned
                 {
-                    if (triggerTick % 60 == 0) // Show notification every second
+                    if (triggerTick % 6 == 0) // Show notification every second
                     {
                         // Get current position of cockpit
                         Vector3D currentPosition = Cockpit.GetPosition();
