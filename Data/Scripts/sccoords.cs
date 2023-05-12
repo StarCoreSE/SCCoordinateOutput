@@ -24,10 +24,14 @@ namespace coordoutput
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
-            if (!MyAPIGateway.Session.IsServer) return; // Only do explosions serverside
+            if (!MyAPIGateway.Session.IsServer) return; // Only do stuff serverside
             Cockpit = Entity as Sandbox.ModAPI.IMyCockpit;
             NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
+
+            // Clear log file on world load
+            MyAPIGateway.Utilities.DeleteFileInWorldStorage(fileName, typeof(coordoutput));
         }
+
 
         public override void UpdateOnceBeforeFrame()
         {
