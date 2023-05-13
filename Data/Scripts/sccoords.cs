@@ -20,18 +20,14 @@ namespace coordoutput
     {
         private Sandbox.ModAPI.IMyCockpit Cockpit;
         private int triggerTick = 0;
-        private string fileName = "coordinates.txt";
+        private string fileExtension = ".txt";
 
         public override void Init(MyObjectBuilder_EntityBase objectBuilder)
         {
             if (!MyAPIGateway.Session.IsServer) return; // Only do stuff serverside
             Cockpit = Entity as Sandbox.ModAPI.IMyCockpit;
             NeedsUpdate |= MyEntityUpdateEnum.BEFORE_NEXT_FRAME;
-
-            // Clear log file on world load
-            MyAPIGateway.Utilities.DeleteFileInWorldStorage(fileName, typeof(coordoutput));
         }
-
 
         public override void UpdateOnceBeforeFrame()
         {
@@ -51,14 +47,19 @@ namespace coordoutput
             {
                 if (Cockpit.IsUnderControl) // Only execute when cockpit is manned
                 {
-                    if (triggerTick % 6 == 0) // Show notification every second
+                    if (triggerTick % 60 == 0) // Show notification every second
                     {
                         // Get current position of cockpit
                         Vector3D currentPosition = Cockpit.GetPosition();
+                        // Get grid name
+                        string gridName = Cockpit.CubeGrid.CustomName;
                         // Create debug message with current position and grid name
-                        string message = string.Format("{0} position: X={1}, Y={2}, Z={3}", Cockpit.CubeGrid.CustomName, currentPosition.X, currentPosition.Y, currentPosition.Z);
+                        string message = string.Format("{0} position: X={1}, Y={2}, Z={3}", gridName, currentPosition.X, currentPosition.Y, currentPosition.Z);
                         // Show the debug message
                         MyVisualScriptLogicProvider.ShowNotificationLocal(message, 1000, "Debug");
+
+                        // Create unique file name based on grid name
+                        string fileName = gridName + fileExtension;
 
                         // Read existing contents of the file, or create an empty string if the file doesn't exist
                         string existingContents = "";
@@ -69,20 +70,9 @@ namespace coordoutput
                             reader.Close();
                         }
 
-                        // Remove any lines with the same grid name as the current grid
-                        string[] lines = existingContents.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-                        string updatedContents = "";
-                        foreach (string line in lines)
-                        {
-                            if (!line.StartsWith(Cockpit.CubeGrid.CustomName))
-                            {
-                                updatedContents += line + "\n";
-                            }
-                        }
-
                         // Append new data to the existing contents
-                        string newData = string.Format("{0} position: X={1}, Y={2}, Z={3}\n", Cockpit.CubeGrid.CustomName, currentPosition.X, currentPosition.Y, currentPosition.Z);
-                        updatedContents += newData;
+                        string newData = string.Format("{0} position: X={1}, Y={2}, Z={3}\n", gridName, currentPosition.X, currentPosition.Y, currentPosition.Z);
+                        string updatedContents = existingContents + newData;
 
                         // Write the updated contents back to the file
                         var writer = MyAPIGateway.Utilities.WriteFileInWorldStorage(fileName, typeof(coordoutput));
@@ -99,15 +89,5 @@ namespace coordoutput
                 }
             }
         }
-
-
-
-
-
     }
-
-
 }
-
-
-
