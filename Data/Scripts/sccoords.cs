@@ -56,7 +56,7 @@ namespace coordoutput
                         // Create debug message with current position and grid name
                         string message = string.Format("{0} position: X={1}, Y={2}, Z={3}", gridName, currentPosition.X, currentPosition.Y, currentPosition.Z);
                         // Show the debug message
-                        MyVisualScriptLogicProvider.ShowNotificationLocal(message, 1000, "Debug");
+                        //MyVisualScriptLogicProvider.ShowNotificationLocal(message, 1000, "Debug");
 
                         // Create unique file name based on grid name
                         string fileName = gridName + fileExtension;
